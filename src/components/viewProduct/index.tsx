@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import {
+  addExtraIngredients,
+  changeBooleanStatus,
+  removeExtraIngredients,
+  addOrder,
+} from "../../store/slice/productSlice";
+
 import {
   Container,
   ContainerDescription,
   ContainerIngredients,
   ContainerOptionNumber,
-  ChangeValueOtion,
+  ChangeValueOption,
   MaxIngredients,
   ContainerOptionBoolean,
   ContainerFinishOrder,
@@ -24,6 +33,9 @@ interface IProps {
 }
 
 export const ViewProduct: React.FC<IProps> = ({ product }) => {
+  const [amountOrder, setAmountOrder] = useState<number>(1);
+  const dispatch = useDispatch();
+
   return (
     <Container>
       <ContainerDescription>
@@ -37,16 +49,26 @@ export const ViewProduct: React.FC<IProps> = ({ product }) => {
       </ContainerDescription>
       <ContainerIngredients>
         {product.ingredients.map((item: IIngredients) => {
-          if (item.type === "number") return <OptionNumber {...item} />;
-          else if (item.type === "boolean") return <OptionBoolean {...item} />;
+          if (item.type === "number")
+            return <OptionNumber key={item.group} {...item} />;
+          else if (item.type === "boolean")
+            return <OptionBoolean key={item.group} {...item} />;
         })}
         <ContainerFinishOrder>
           <div>
-            <MdOutlineRemove className="icon" />
-            <p>0</p>
-            <MdAdd className="icon" />
+            <MdOutlineRemove
+              className="icon"
+              onClick={() => {
+                if (amountOrder - 1 != 0) setAmountOrder(amountOrder - 1);
+              }}
+            />
+            <p>{amountOrder}</p>
+            <MdAdd
+              className="icon"
+              onClick={() => setAmountOrder(amountOrder + 1)}
+            />
           </div>
-          <button>Adicionar</button>
+          <button onClick={() => dispatch(addOrder())}>Adicionar</button>
         </ContainerFinishOrder>
       </ContainerIngredients>
     </Container>
@@ -61,23 +83,44 @@ const OptionNumber: React.FC<IIngredients> = (item) => {
         <p>Até {item.max_itens} ingredientes.</p>
       </MaxIngredients>
       {item.itens.map((item: IItens) => (
-        <ChangeValueOtion key={item.id}>
-          <div>
-            <h6>{item.nm_item}</h6>
-            <p>+ R${item.vl_item}</p>
-          </div>
-          <div>
-            <MdOutlineRemove className="icon" />
-            <p>0</p>
-            <MdAdd className="icon" />
-          </div>
-        </ChangeValueOtion>
+        <Ingredient key={item.id} {...item} />
       ))}
     </ContainerOptionNumber>
   );
 };
 
+const Ingredient: React.FC<IItens> = (item) => {
+  const dispatch = useDispatch();
+  const productSlice = useSelector((state: RootState) =>
+    state.product.optionNumber.filter((element) => element.id === item.id)
+  );
+
+  return (
+    <ChangeValueOption key={item.id}>
+      <div>
+        <h6>{item.nm_item}</h6>
+        <p>+ R${item.vl_item}</p>
+      </div>
+      <div>
+        <MdOutlineRemove
+          className="icon"
+          onClick={() => dispatch(removeExtraIngredients(item.id))}
+        />
+        <p>{productSlice.length > 0 ? productSlice[0].amount : 0}</p>
+        <MdAdd
+          className="icon"
+          onClick={() => dispatch(addExtraIngredients(item))}
+        />
+      </div>
+    </ChangeValueOption>
+  );
+};
+
 const OptionBoolean: React.FC<IIngredients> = (item) => {
+  const dispatch = useDispatch();
+  const productSlice = useSelector(
+    (state: RootState) => state.product.optionBoolean
+  );
   return (
     <ContainerOptionBoolean>
       <div>
@@ -85,11 +128,19 @@ const OptionBoolean: React.FC<IIngredients> = (item) => {
       </div>
       <div>
         <p>Sim</p>
-        <input type={"checkbox"} />
+        <input
+          type={"checkbox"}
+          checked={productSlice}
+          onChange={() => dispatch(changeBooleanStatus())}
+        />
       </div>
       <div>
         <p>Não</p>
-        <input type={"checkbox"} />
+        <input
+          type={"checkbox"}
+          checked={!productSlice}
+          onChange={() => dispatch(changeBooleanStatus())}
+        />
       </div>
     </ContainerOptionBoolean>
   );
