@@ -5,4 +5,10 @@ export const Container = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
+  .loading {
+    margin: auto;
+    font-weight: 500;
+    color: #e49700;
+  }
 `;
