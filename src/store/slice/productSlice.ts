@@ -39,9 +39,8 @@ const productSlice = createSlice({
       let exist = state.optionNumber.findIndex(
         (element: IExtraIngredients) => element.id == action.payload
       );
-      if (exist != -1 && state.optionNumber[exist].amount - 1 !== 0)
+      if (exist != -1 && state.optionNumber[exist].amount - 1 !== -1)
         state.optionNumber[exist].amount -= 1;
-      else if (exist) state.optionNumber.splice(exist, 1);
     },
     changeBooleanStatus(state) {
       state.optionBoolean = !state.optionBoolean;
