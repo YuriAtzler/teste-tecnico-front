@@ -18,7 +18,6 @@ import {
   MdKeyboardArrowDown,
   MdArrowBackIosNew,
 } from "react-icons/md";
-import { IItens } from "../../interfaces/productInterface";
 
 export const Header: React.FC = () => {
   const productSlice = useSelector((state: RootState) => state.product);

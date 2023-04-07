@@ -34,7 +34,7 @@ export const Container = styled.div`
     border-radius: 100%;
     width: 20px;
     height: 20px;
-    top: 10%;
+    top: 20%;
     right: 65px;
 
     p {
