@@ -2,6 +2,7 @@
 
 # Comandos de inicialização
 
+- npm install
 - npm run dev
 - acessar o link que apareça no terminal
 
