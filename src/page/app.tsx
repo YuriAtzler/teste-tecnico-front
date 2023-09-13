@@ -9,7 +9,7 @@ export const App: React.FC = () => {
   return (
     <Container>
       <Components.Header />
-      {isLoading && <h1 className="loading">Carregando...</h1>}
+      {isLoading && <h1 className="loading">Carregando....</h1>}
       {data && <Components.ViewProduct product={data[0]} />}
     </Container>
   );
